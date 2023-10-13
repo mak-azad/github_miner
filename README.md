@@ -1,4 +1,4 @@
-# github_miner
+# Github Miner
 A tool to search github repositories and process information found from each of the repositories
 
 ## Pre-reuisites
