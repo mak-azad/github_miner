@@ -1,7 +1,7 @@
 # Github Miner
 A tool to search github repositories and process information found from each of the repositories
 
-## Pre-reuisites
+## Pre-requisites
 Python `3.8+`
 
 ### Fetch github repositories and export in a CSV file
