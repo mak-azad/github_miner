@@ -1,5 +1,6 @@
 from pydriller import Repository
 import csv
+import argparse
 
 def read_repository_urls_from_csv(input_csv_file):
     with open(input_csv_file, 'r') as input_file:
@@ -21,10 +22,7 @@ def write_commit_analysis_to_csv(output_csv_file, commit_data):
         # Write the commit data
         writer.writerows(commit_data)
 
-def main():
-    input_csv_file = "repository_urls.csv"
-    output_csv_file = "commit_analysis_result.csv"
-
+def main(input_csv_file, output_csv_file):
     # Read repository URLs from the input CSV
     repo_urls = read_repository_urls_from_csv(input_csv_file)
 
@@ -33,8 +31,15 @@ def main():
         # Analyze each repository and collect commit data
         commit_data = analyze_repository(repo_url)
         all_commit_data.extend(commit_data)
+
     # Write all commit analysis data to the output CSV
     write_commit_analysis_to_csv(output_csv_file, all_commit_data)
 
 if __name__ == "__main__":
-    main()
+    # Add command-line argument parsing
+    parser = argparse.ArgumentParser(description="Analyze repositories and write commit analysis data to CSV.")
+    parser.add_argument("input_csv_file", help="Path to the input CSV file containing repository URLs.")
+    parser.add_argument("output_csv_file", help="Path to the output CSV file where data will be written.")
+    args = parser.parse_args()
+
+    main(args.input_csv_file, args.output_csv_file)
