@@ -1,5 +1,6 @@
 import pygit2
 import socket
+import os
 
 # Set Git Credentials
 username = ''
@@ -10,7 +11,7 @@ def commit_n_push():
 
     # Generate the output file name with the specified prefix and IP address
     host_ip = socket.gethostbyname(socket.gethostname())
-    output_csv_file = f"github_repo_analysis_result_{host_ip}.csv"
+    output_csv_file = os.path.join("results", f"github_repo_analysis_result_{host_ip}.csv")
 
     # Replace these values with your repository information
     repository_path = f'/users/{username}/github_miner'

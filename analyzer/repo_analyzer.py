@@ -2,6 +2,7 @@ import socket
 from pydriller import Repository
 from pygitclient import commit_n_push
 import csv
+import os
 
 file_type = '.py'
 published_commits = 0
@@ -9,6 +10,10 @@ commit_counter = 0
 # Set number of commits after which result file will be pushed to github
 buffer_size = 100
 
+# Create a 'results' directory if it doesn't exist
+results_dir = 'results'
+if not os.path.exists(results_dir):
+    os.mkdir(results_dir)
 
 def read_repository_urls_from_csv(input_csv_file):
     with open(input_csv_file, 'r') as input_file:
@@ -49,7 +54,8 @@ def main():
     # Define the input CSV file name
     input_csv_file = f"github_repositories_{host_ip}.csv"
     repo_urls = read_repository_urls_from_csv(input_csv_file)
-    output_csv_file = f"github_repo_analysis_result_{host_ip}.csv"
+    # Specify the output file path inside the 'results' directory
+    output_csv_file = os.path.join(results_dir, f"github_repo_analysis_result_{host_ip}.csv")
 
     all_commit_data = []
     for repo_url in repo_urls:
