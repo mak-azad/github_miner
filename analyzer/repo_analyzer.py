@@ -1,6 +1,6 @@
 import socket
 from pydriller import Repository
-from pygitclient import commit_n_push
+# from pygitclient import commit_n_push
 import csv
 import os
 
@@ -33,7 +33,7 @@ def analyze_repository(repo_url, output_csv_file):
         if commit_counter % buffer_size == 0:
             published_commits +=buffer_size
             write_commit_analysis_to_csv(output_csv_file, commit_data)
-            commit_n_push()
+            # commit_n_push()
             print(f"{commit_counter} commits are added")
 
     return commit_data
@@ -66,7 +66,7 @@ def main():
     # Write any remaining commit analysis data to the output CSV
     if all_commit_data:
         write_commit_analysis_to_csv(output_csv_file, all_commit_data)
-        commit_n_push()
+        # commit_n_push()
 
 if __name__ == "__main__":
     main()
