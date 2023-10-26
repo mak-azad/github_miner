@@ -63,7 +63,7 @@ def main():
     all_commit_data = []
     for repo_url in repo_urls:
         # Analyze each repository and collect commit data
-        commit_data = analyze_repository(repo_url)
+        commit_data = analyze_repository(repo_url, output_csv_file)
         all_commit_data.extend(commit_data)
 
     # Write any remaining commit analysis data to the output CSV
