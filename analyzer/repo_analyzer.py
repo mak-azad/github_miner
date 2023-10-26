@@ -16,6 +16,7 @@ if not os.path.exists(results_dir):
     os.mkdir(results_dir)
 
 def read_repository_urls_from_csv(input_csv_file):
+    print("Processing input filename: ", input_csv_file)
     with open(input_csv_file, 'r') as input_file:
         reader = csv.reader(input_file)
         repo_urls = [row[0] for row in reader]
