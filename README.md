@@ -26,8 +26,32 @@ Add all the node ip addresses line by line into the `sshhosts` file
 Execute the authenticator scripts inside each nodes at first<br>
 Run command: `sh authenticator.sh`
 
+### Check if all worker nodes are accessible from the master node
+Run the following command to using parallel-ssh to print the node names. Do not run any further `parallel` commands until this one executes sucessfully.
+```
+parallel-ssh -i -h sshhosts -O StrictHostKeyChecking=no hostname
+```
+
+### Clone the github_miner repository in all nodes to upload the commit analysis results
+```
+parallel-ssh -i -h sshhosts 'git clone https://github.com/ssmtariq/github_miner.git'
+```
+
+### Configure the Python Git client with your Git username, email and token. 
+Open the file `analyzer/pygitclient.py` and set values for the variables username, token and email
+
+### Run script to split and distribute the input files along with analyzer among the nodes
+```
+python3.8 task_parallelizer.py
+```
+
+### Rename the splitted input csv file to run using parallel-ssh command
+```
+parallel-ssh -i -h sshhosts 'find . -type f -name "github_miner/analyzer/github*.csv" -exec mv {} github_miner/analyzer/input.csv \;'
+```
+
 ### Execute the analyzer on multiple nodes in parallel
 Run the following command to execute the analyzer using parallel-ssh
 ```
-parallel-ssh -A -i -h sshhosts python repo_analyzer.py
+parallel-ssh -A -i -h sshhosts python github_miner/analyzer/repo_analyzer.py
 ```
