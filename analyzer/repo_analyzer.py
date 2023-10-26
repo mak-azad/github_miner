@@ -4,6 +4,7 @@ from pydriller import Repository
 import csv
 import os
 
+root_dir = "github_miner/analyzer"
 file_type = '.py'
 published_commits = 0
 commit_counter = 0
@@ -11,7 +12,7 @@ commit_counter = 0
 buffer_size = 100
 
 # Create a 'results' directory if it doesn't exist
-results_dir = 'results'
+results_dir = f'{root_dir}/results'
 if not os.path.exists(results_dir):
     os.mkdir(results_dir)
 
@@ -53,7 +54,8 @@ def main():
     # Generate the output file name with the specified prefix and IP address
     host_ip = socket.gethostbyname(socket.gethostname())
     # Define the input CSV file name
-    input_csv_file = f"github_repositories_{host_ip}.csv"
+    # input_csv_file = f"github_repositories_{host_ip}.csv"
+    input_csv_file = os.path.join(root_dir, f"github_repositories_{host_ip}.csv")
     repo_urls = read_repository_urls_from_csv(input_csv_file)
     # Specify the output file path inside the 'results' directory
     output_csv_file = os.path.join(results_dir, f"github_repo_analysis_result_{host_ip}.csv")
