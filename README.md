@@ -45,11 +45,6 @@ Open the file `analyzer/pygitclient.py` and set values for the variables usernam
 python3.8 task_parallelizer.py
 ```
 
-### Rename the splitted input csv file to run using parallel-ssh command
-```
-parallel-ssh -i -h sshhosts 'find . -type f -name "github_miner/analyzer/github*.csv" -exec mv {} github_miner/analyzer/input.csv \;'
-```
-
 ### Execute the analyzer on multiple nodes in parallel
 Run the following command to execute the analyzer using parallel-ssh
 ```
