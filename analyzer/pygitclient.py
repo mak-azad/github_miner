@@ -2,9 +2,9 @@ import pygit2
 import socket
 
 # Set Git Credentials
-username = 'ssmtariq'
-token = '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'  # You can use a Personal Access Token (PAT) as well
-email = 'syedtariqfiles@gmail.com'
+username = ''
+token = ''  # You can use a Personal Access Token (PAT) as well
+email = ''
 
 def commit_n_push():
 

@@ -14,7 +14,7 @@ def read_ssh_hosts(filename):
         return [line.strip() for line in hosts_file]
 
 # Function to split data into separate input CSV files for each node
-def split_csv_data(input_csv, num_nodes, hostnames, output_directory):
+def split_csv_data(input_csv, num_nodes, hostnames, split_files_dir):
     input_df = pd.read_csv(input_csv)
     rows_per_node = len(input_df) // num_nodes
     split_data = []
@@ -24,7 +24,7 @@ def split_csv_data(input_csv, num_nodes, hostnames, output_directory):
         node_df = input_df[start_row:end_row]
 
         # Append the IP address to the filename
-        filename = os.path.join(output_directory, f"github_repositories_{hostnames[i]}.csv")
+        filename = os.path.join(split_files_dir, f"github_repositories_{hostnames[i]}.csv")
         node_df.to_csv(filename, index=False)
         split_data.append(filename)
     return split_data
@@ -68,7 +68,7 @@ def main():
     hostnames = ssh_hosts
     split_data = split_csv_data(input_csv, num_nodes, hostnames, split_files_dir)
 
-    destination_path = f"/users/ssmtariq/github_miner"  # Set your destination path here
+    destination_path = f"/users/ssmtariq/github_miner/{split_files_dir}"  # Set your destination path here
 
     copy_files_to_nodes(files_to_copy, ssh_hosts, split_data, destination_path, user)
 

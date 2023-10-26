@@ -3,8 +3,6 @@ from pydriller import Repository
 from pygitclient import commit_n_push
 import csv
 
-# Define the input CSV file name
-input_csv_file = "input.csv"
 file_type = '.py'
 published_commits = 0
 commit_counter = 0
@@ -45,11 +43,12 @@ def write_commit_analysis_to_csv(output_csv_file, commit_data):
         writer.writerows(commit_data)
 
 def main():
-    # Read repository URLs from the input CSV
-    repo_urls = read_repository_urls_from_csv(input_csv_file)
 
     # Generate the output file name with the specified prefix and IP address
     host_ip = socket.gethostbyname(socket.gethostname())
+    # Define the input CSV file name
+    input_csv_file = f"github_repositories_{host_ip}.csv"
+    repo_urls = read_repository_urls_from_csv(input_csv_file)
     output_csv_file = f"github_repo_analysis_result_{host_ip}.csv"
 
     all_commit_data = []
