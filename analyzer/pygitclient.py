@@ -13,38 +13,44 @@ def commit_n_push():
     host_ip = socket.gethostbyname(socket.gethostname())
     output_csv_file = os.path.join("results", f"github_repo_analysis_result_{host_ip}.csv")
 
-    # Replace these values with your repository information
-    repository_path = f'/users/{username}/github_miner'
-    remote_name = 'origin'
-    branch_name = 'main'  # Replace with your branch name
+    # Check if the output_csv_file exists
+    if os.path.exists(output_csv_file):
 
-    # Open the repository
-    repo = pygit2.Repository(repository_path)
+        # Replace these values with your repository information
+        repository_path = f'/users/{username}/github_miner'
+        remote_name = 'origin'
+        branch_name = 'main'  # Replace with your branch name
 
-    # Get the remote
-    remote = repo.remotes[remote_name]
+        # Open the repository
+        repo = pygit2.Repository(repository_path)
 
-    # Fetch the latest changes from the remote
-    remote.fetch()
+        # Get the remote
+        remote = repo.remotes[remote_name]
 
-    # Get the status of the repository
-    status = repo.status()
-    # Check if there are changes to commit
-    if output_csv_file in status and status[output_csv_file] != pygit2.GIT_STATUS_CURRENT:
-        # Create a new commit with a message
-        index = repo.index
-        index.add(output_csv_file)  # Only add the specific file
-        index.write()
-        tree = index.write_tree()
-        author = pygit2.Signature(username, email)
-        committer = author
-        message = "Update result file from the host: "+host_ip
-        commit_oid = repo.create_commit('HEAD', author, committer, message, tree, [repo.head.target])
+        # Fetch the latest changes from the remote
+        remote.fetch()
 
-        # Push the commit to the remote branch
-        credentials = pygit2.UserPass(username, token)
-        remote.push(["refs/heads/" + branch_name], callbacks=pygit2.RemoteCallbacks(credentials=credentials))
+        # Get the status of the repository
+        status = repo.status()
 
-        print("Changes committed and pushed successfully.")
+        # Check if there are changes to commit
+        if output_csv_file in status and status[output_csv_file] != pygit2.GIT_STATUS_CURRENT:
+            # Create a new commit with a message
+            index = repo.index
+            index.add(output_csv_file)  # Only add the specific file
+            index.write()
+            tree = index.write_tree()
+            author = pygit2.Signature(username, email)
+            committer = author
+            message = "Update result file from the host: " + host_ip
+            commit_oid = repo.create_commit('HEAD', author, committer, message, tree, [repo.head.target])
+
+            # Push the commit to the remote branch
+            credentials = pygit2.UserPass(username, token)
+            remote.push(["refs/heads/" + branch_name], callbacks=pygit2.RemoteCallbacks(credentials=credentials))
+
+            print("Changes committed and pushed successfully.")
+        else:
+            print("No changes to commit.")
     else:
-        print("No changes to commit.")
+        print(f"The file {output_csv_file} does not exist. Skipping commit and push.")
