@@ -2,9 +2,24 @@
 A tool to search github repositories and process information found from each of the repositories
 
 ## Pre-requisites
-Python `3.8+`
+- Python `3.8+`
+- Multinode [CloudLab](https://www.cloudlab.us/) Ubuntu Cluster
 
-## 1. Fetch github repositories and export in a CSV file
+## 1. Access the master node of your cluster and configure scripts
+### Install Python 3.8
+```
+sudo apt-get install -y python3.8-distutils && curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py && sudo python3.8 get-pip.py && pip3 --version
+```
+
+### Clone the miner scripts
+Run the cloning command
+```
+git clone https://github.com/ssmtariq/github_miner.git
+```
+Change the directory `cd github_miner`
+
+
+## 2. Fetch github repositories and export in a CSV file
 Use the following command to fetch repositories from github and export into the file `github_repositories.csv`
 ```
 python repo_fetcher.py --language <LANGUAGE> --stars <MINIMUM_STARS> --forks <MINIMUM_FORKS> --last_commit <LAST_UPDATE_DATE> --result_limit <NUMBER_OF_REPO>
@@ -18,7 +33,7 @@ python repo_fetcher.py --language Python --stars 100 --forks 10 --last_commit 20
 You can run without any filter as the command below, then the script applies the above filters by default<br>
 `python repo_fetcher.py`
 
-## 2. Run the commit analyzer on multi-node cluster using parallel ssh
+## 3. Run the commit analyzer on multi-node cluster using parallel ssh
 ### Create the hosts file
 Add all the node ip addresses line by line into the `sshhosts` file
 
@@ -45,8 +60,24 @@ Open the file `analyzer/pygitclient.py` and set values for the variables usernam
 python3.8 task_parallelizer.py
 ```
 
+### Install python3.8 in all worker nodes
+
+```
+parallel-ssh -A -i -h sshhosts 'sudo apt-get update && sudo apt-get install -y software-properties-common && sudo add-apt-repository -y ppa:deadsnakes/ppa && sudo apt-get update && sudo apt-get install -y python3.8 && python3.8 --version'
+```
+
+### Install pip for python3.8 in all worker nodes
+```
+parallel-ssh -A -i -h sshhosts 'sudo apt-get install -y python3.8-distutils && curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py && sudo python3.8 get-pip.py && pip3 --version'
+```
+
+### Install required dependencies for our scripts
+```
+parallel-ssh -A -i -h sshhosts 'pip3 --version && pip3 install pydriller pygit2'
+```
+
 ### Execute the analyzer on multiple nodes in parallel
 Run the following command to execute the analyzer using parallel-ssh
 ```
-parallel-ssh -A -i -h sshhosts python github_miner/analyzer/repo_analyzer.py
+parallel-ssh -A -i -h sshhosts 'python3.8 github_miner/analyzer/repo_analyzer.py'
 ```
