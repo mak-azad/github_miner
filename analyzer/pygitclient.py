@@ -6,6 +6,7 @@ import os
 username = ''
 token = ''  # You can use a Personal Access Token (PAT) as well
 email = 'syedtariqfiles@gmail.com'
+host_ip = socket.gethostbyname(socket.gethostname())
 
 # def commit_n_push():
 
@@ -58,7 +59,6 @@ email = 'syedtariqfiles@gmail.com'
 
 def commit_n_push():
 
-    host_ip = socket.gethostbyname(socket.gethostname())
     output_csv_file = os.path.join(f"/users/{username}/github_miner/analyzer/results", f"github_repo_analysis_result_{host_ip}.csv")
 
     if os.path.exists(output_csv_file):
