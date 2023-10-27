@@ -1,6 +1,6 @@
 import socket
 from pydriller import Repository
-# from pygitclient import commit_n_push
+from pygitclient import commit_n_push
 import csv
 import os
 
@@ -20,7 +20,9 @@ def read_repository_urls_from_csv(input_csv_file):
     print("Processing input filename: ", input_csv_file)
     with open(input_csv_file, 'r') as input_file:
         reader = csv.reader(input_file)
-        repo_urls = [row[0] for row in reader]
+        # Skip the header row
+        next(reader, None)
+        repo_urls = [row[6] for row in reader]
     return repo_urls
 
 def analyze_repository(repo_url, output_csv_file):
@@ -28,14 +30,26 @@ def analyze_repository(repo_url, output_csv_file):
     global published_commits
     commit_data = []
     for commit in Repository(repo_url, only_modifications_with_file_types=[file_type]).traverse_commits():
-        commit_data.append([commit.project_name, commit.hash, commit.msg, commit.insertions, commit.deletions, commit.committer_date, commit.lines, commit.files, commit.author.name])
+        original_codes = []
+        modified_codes = []
+        modified_files = []
+        methods_before = []
+        methods_after = []
+        for m in commit.modified_files:
+            original_codes.append(m.source_code_before)
+            modified_codes.append(m.source_code)
+            modified_files.append(m.filename)
+            methods_before.append(m.methods_before)
+            methods_after.append(m.changed_methods)
+
+        commit_data.append([commit.project_name, commit.hash, commit.msg, commit.committer_date, commit.author.name, commit.insertions, commit.deletions, commit.lines, commit.files, modified_files, original_codes, modified_codes, methods_before, methods_after])
         commit_counter += 1
 
         #Push interim commit analysis result to github
         if commit_counter % buffer_size == 0:
             published_commits +=buffer_size
             write_commit_analysis_to_csv(output_csv_file, commit_data)
-            # commit_n_push()
+            commit_n_push()
             print(f"{commit_counter} commits are added")
 
     return commit_data
@@ -45,7 +59,7 @@ def write_commit_analysis_to_csv(output_csv_file, commit_data):
         writer = csv.writer(output_file)
         if output_file.tell() == 0:
             # If the file is empty, write the header row
-            writer.writerow(["Project Name", "Commit Hash", "Message", "Additions", "Deletions", "Commit Date", "Lines changed", "Files Changed", "Author Name"])
+            writer.writerow(["Project Name", "Commit Hash", "Message", "Commit Date", "Author Name", "Additions", "Deletions", "Lines changed", "Files Changed", "Modified files", "Original Code", "Modified Code", "Methods Before", "Methods After"])
         # Write the commit data
         writer.writerows(commit_data)
 
@@ -61,15 +75,18 @@ def main():
     output_csv_file = os.path.join(results_dir, f"github_repo_analysis_result_{host_ip}.csv")
 
     all_commit_data = []
+    # commit_data = analyze_repository('https://github.com/ssmtariq/github_miner', output_csv_file)
+    # all_commit_data.extend(commit_data)
     for repo_url in repo_urls:
         # Analyze each repository and collect commit data
+        print("Processing repo url: ", repo_url)
         commit_data = analyze_repository(repo_url, output_csv_file)
         all_commit_data.extend(commit_data)
 
     # Write any remaining commit analysis data to the output CSV
     if all_commit_data:
         write_commit_analysis_to_csv(output_csv_file, all_commit_data)
-        # commit_n_push()
+        commit_n_push()
 
 if __name__ == "__main__":
     main()
