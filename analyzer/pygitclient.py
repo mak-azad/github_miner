@@ -11,15 +11,7 @@ def commit_n_push():
 
     # Generate the output file name with the specified prefix and IP address
     host_ip = socket.gethostbyname(socket.gethostname())
-    output_csv_file = os.path.join("results", f"github_repo_analysis_result_{host_ip}.csv")
-
-    path1 = "/users/ssmtariq/github_miner/analyzer/"+output_csv_file
-    path2 = "/analyzer/"+output_csv_file
-    if os.path.exists(path1):
-        print("The existing path is: ", path1)
-
-    if os.path.exists(path2):
-        print("The existing path is: ", path2)
+    output_csv_file = os.path.join(f"/users/{username}/github_miner/analyzer/results", f"github_repo_analysis_result_{host_ip}.csv")
 
     # Check if the output_csv_file exists
     if os.path.exists(output_csv_file):
