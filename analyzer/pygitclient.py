@@ -61,7 +61,7 @@ def commit_n_push():
 
     output_csv_file = os.path.join(f"/analyzer/results", f"github_repo_analysis_result_{host_ip}.csv")
 
-    if os.path.exists(output_csv_file):
+    if os.path.exists(f'/users/{username}/github_miner'+output_csv_file):
         repository_path = f'/users/{username}/github_miner'
         remote_name = 'origin'
         branch_name = 'main'
@@ -97,7 +97,7 @@ def has_changes_to_commit(repo, output_csv_file):
             return True
 
     # If the file is not in the index, stage it for commit
-    index.add(output_csv_file)
+    index.add(f'/users/{username}/github_miner'+output_csv_file)
     index.write()
     return True
 
