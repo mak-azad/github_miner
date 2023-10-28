@@ -18,6 +18,8 @@ git clone https://github.com/ssmtariq/github_miner.git
 ```
 Change the directory `cd github_miner`
 
+### Configure the Python Git client with your Git username, email and token. 
+Open the file `analyzer/pygitclient.py` and set values for the variables username, token and email
 
 ## 2. Fetch github repositories and export in a CSV file
 Use the following command to fetch repositories from github and export into the file `github_repositories.csv`
@@ -47,33 +49,43 @@ Run the following command to using parallel-ssh to print the node names. Do not 
 parallel-ssh -i -h sshhosts -O StrictHostKeyChecking=no hostname
 ```
 
+### Install python3.8 in all worker nodes
+Run the following command only if python3.8 not installed earlier
+```
+parallel-ssh -A -i -h sshhosts 'sudo apt-get update && sudo apt-get install -y software-properties-common && sudo add-apt-repository -y ppa:deadsnakes/ppa && sudo apt-get update && sudo apt-get install -y python3.8'
+```
+Check and confirm python3.8 version in all worker nodes
+```
+parallel-ssh -A -i -h sshhosts 'python3.8 --version'
+```
+
+### Install pip for python3.8 in all worker nodes
+Run the following command only if pip for python3.8 not installed earlier
+```
+parallel-ssh -A -i -h sshhosts 'sudo apt-get install -y python3.8-distutils && curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py && sudo python3.8 get-pip.py'
+```
+Check and confirm pip version for python3.8 in all worker nodes
+```
+parallel-ssh -A -i -h sshhosts 'pip3 --version'
+```
+
+### Install required dependencies for our scripts
+```
+parallel-ssh -A -i -h sshhosts 'pip3 install pydriller pygit2'
+```
+Confirm the installations of required dependencies
+```
+parallel-ssh -A -i -h sshhosts 'pip3 show pydriller && pip3 show pygit2'
+```
+
 ### Clone the github_miner repository in all nodes to upload the commit analysis results
 ```
 parallel-ssh -i -h sshhosts 'git clone https://github.com/ssmtariq/github_miner.git'
 ```
 
-### Configure the Python Git client with your Git username, email and token. 
-Open the file `analyzer/pygitclient.py` and set values for the variables username, token and email
-
 ### Run script to split and distribute the input files along with analyzer among the nodes
 ```
 python3.8 task_parallelizer.py
-```
-
-### Install python3.8 in all worker nodes
-
-```
-parallel-ssh -A -i -h sshhosts 'sudo apt-get update && sudo apt-get install -y software-properties-common && sudo add-apt-repository -y ppa:deadsnakes/ppa && sudo apt-get update && sudo apt-get install -y python3.8 && python3.8 --version'
-```
-
-### Install pip for python3.8 in all worker nodes
-```
-parallel-ssh -A -i -h sshhosts 'sudo apt-get install -y python3.8-distutils && curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py && sudo python3.8 get-pip.py && pip3 --version'
-```
-
-### Install required dependencies for our scripts
-```
-parallel-ssh -A -i -h sshhosts 'pip3 --version && pip3 install pydriller pygit2'
 ```
 
 ### Execute the analyzer on multiple nodes in parallel
