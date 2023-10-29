@@ -23,7 +23,7 @@ def commit_n_push():
 
         if fetch_remote_changes(remote):
             if has_changes_to_commit(repo, output_csv_file):
-                commit_and_push(repo, output_csv_file, username, email, branch_name)
+                commit_and_push(repo, remote, output_csv_file, username, email, branch_name)
                 print("Changes committed and pushed successfully.")
             else:
                 print("No changes to commit.")
@@ -56,7 +56,7 @@ def has_changes_to_commit(repo, output_csv_file):
     index.write()
     return True
 
-def commit_and_push(repo, output_csv_file, username, email, branch_name):
+def commit_and_push(repo, remote, output_csv_file, username, email, branch_name):
     index = repo.index
     index.add(output_csv_file)
     index.write()
@@ -66,4 +66,5 @@ def commit_and_push(repo, output_csv_file, username, email, branch_name):
     message = "Update result file from the host: " + host_ip
     commit_oid = repo.create_commit('HEAD', author, committer, message, tree, [repo.head.target])
     credentials = pygit2.UserPass(username, token)
+    print("Pulled latest remote changes: ", fetch_remote_changes(remote))
     repo.remotes['origin'].push(["refs/heads/" + branch_name], callbacks=pygit2.RemoteCallbacks(credentials=credentials))
