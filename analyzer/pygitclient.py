@@ -63,7 +63,7 @@ def fetch_and_merge_remote_changes(repo, remote, branch_name):
 
         # Merge the changes from the remote branch into your local branch
         local_branch = repo.lookup_branch(branch_name)
-        local_branch.set_target(remote.head.target)
+        local_branch.set_target(remote.lookup_reference(f"refs/remotes/{remote.name}/{branch_name}").target)
 
         return True
     except Exception as e:
