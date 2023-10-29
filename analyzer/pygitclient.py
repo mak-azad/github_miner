@@ -69,7 +69,7 @@ def pull_changes(repo, remote, branch_name):
 
         # Checkout the local branch
         local_branch = repo.branches.get(branch_name)
-        local_branch.set_target(remote.lookup_reference(f"refs/remotes/{remote.name}/{branch_name}").target)
+        local_branch.set_target(f"refs/remotes/{remote.name}/{branch_name}")
 
         return True
     except Exception as e:
