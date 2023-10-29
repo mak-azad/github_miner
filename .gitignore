@@ -1,6 +1,19 @@
-.vscode
-*.class
-out
-pygitclient.py
-*.py
-sshhosts
+# Ignore general Python and project-related files
+__pycache/
+*.pyc
+*.pyo
+*.pyd
+*.db
+*.sqlite3
+*.log
+*.egg-info/
+*.egg
+build/
+dist/
+*.egg-info/
+*.pyc
+*.pyo
+*.db
+*.sqlite3
+*.log
+*.swp
