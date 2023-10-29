@@ -56,7 +56,7 @@ def has_changes_to_commit(repo, output_csv_file):
 def pull_changes(branch_name):
     try:
         # Run the 'git pull' command using subprocess
-        subprocess.run(['git', 'pull'], check=True)
+        subprocess.run(['git', 'pull', 'origin', branch_name], check=True)
         return True
     except subprocess.CalledProcessError as e:
         print(f"Failed to pull remote changes: {e}")
