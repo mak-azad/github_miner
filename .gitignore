@@ -1,0 +1,6 @@
+.vscode
+*.class
+out
+pygitclient.py
+*.py
+sshhosts
