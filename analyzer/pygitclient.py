@@ -3,13 +3,9 @@ import socket
 import os
 import subprocess
 
-# Set Git Credentials
-username = 'ssmtariq'
-token = ''  # You can use a Personal Access Token (PAT) as well
-email = 'syedtariqfiles@gmail.com'
 host_ip = socket.gethostbyname(socket.gethostname())
 
-def commit_n_push():
+def commit_n_push(username, token, email):
 
     output_csv_file = os.path.join(f"analyzer/results", f"github_repo_analysis_result_{host_ip}.csv")
 
@@ -24,7 +20,7 @@ def commit_n_push():
 
         if fetch_remote_changes(remote):
             if has_changes_to_commit(repo, output_csv_file):
-                commit_and_push(repo, remote, output_csv_file, username, email, branch_name)
+                commit_and_push(repo, remote, output_csv_file, username, token, email, branch_name)
                 print("Changes committed and pushed successfully.")
             else:
                 print("No changes to commit.")
@@ -61,13 +57,12 @@ def pull_changes(branch_name):
     try:
         # Run the 'git pull' command using subprocess
         subprocess.run(['git', 'pull'], check=True)
-
         return True
     except subprocess.CalledProcessError as e:
         print(f"Failed to pull remote changes: {e}")
         return False
 
-def commit_and_push(repo, remote, output_csv_file, username, email, branch_name):
+def commit_and_push(repo, remote, output_csv_file, username, token, email, branch_name):
     index = repo.index
     index.add(output_csv_file)
     index.write()
@@ -78,4 +73,4 @@ def commit_and_push(repo, remote, output_csv_file, username, email, branch_name)
     print("Pulled latest remote changes: ", pull_changes(branch_name))
     commit_oid = repo.create_commit('HEAD', author, committer, message, tree, [repo.head.target])
     credentials = pygit2.UserPass(username, token)
-    repo.remotes['origin'].push(["refs/heads/" + branch_name], callbacks=pygit2.RemoteCallbacks(credentials=credentials), force=True)
+    repo.remotes['origin'].push(["refs/heads/" + branch_name], callbacks=pygit2.RemoteCallbacks(credentials=credentials))
