@@ -58,10 +58,6 @@ def has_changes_to_commit(repo, output_csv_file):
 
 def pull_remote_changes(repo, remote, branch_name):
     try:
-        remote_ref = f"refs/heads/{branch_name}"
-        remote_branch = remote.lookup_reference(remote_ref)
-        remote_commit = repo.get(remote_branch.target)
-
         # Perform a pull operation, which fetches and merges changes from the remote
         repo.pull('origin', branch_name)
 
