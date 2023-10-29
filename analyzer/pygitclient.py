@@ -75,7 +75,7 @@ def commit_and_push(repo, remote, output_csv_file, username, email, branch_name)
     author = pygit2.Signature(username, email)
     committer = author
     message = "Update result file from the host: " + host_ip
+    print("Pulled latest remote changes: ", pull_changes(branch_name))
     commit_oid = repo.create_commit('HEAD', author, committer, message, tree, [repo.head.target])
     credentials = pygit2.UserPass(username, token)
-    print("Pulled latest remote changes: ", pull_changes(branch_name))
-    repo.remotes['origin'].push(["refs/heads/" + branch_name], callbacks=pygit2.RemoteCallbacks(credentials=credentials))
+    repo.remotes['origin'].push(["refs/heads/" + branch_name], callbacks=pygit2.RemoteCallbacks(credentials=credentials), force=True)
