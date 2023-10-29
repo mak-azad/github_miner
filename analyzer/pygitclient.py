@@ -56,14 +56,18 @@ def has_changes_to_commit(repo, output_csv_file):
     index.write()
     return True
 
-def pull_remote_changes(repo, remote, branch_name):
+def fetch_and_merge_remote_changes(repo, remote, branch_name):
     try:
-        # Perform a pull operation, which fetches and merges changes from the remote
-        repo.pull('origin', branch_name)
+        # Fetch the latest changes from the remote
+        remote.fetch()
+
+        # Merge the changes from the remote branch into your local branch
+        local_branch = repo.lookup_branch(branch_name)
+        local_branch.set_target(remote.head.target)
 
         return True
     except Exception as e:
-        print(f"Failed to pull remote changes: {e}")
+        print(f"Failed to fetch and merge remote changes: {e}")
         return False
 
 def commit_and_push(repo, remote, output_csv_file, username, email, branch_name):
@@ -76,5 +80,5 @@ def commit_and_push(repo, remote, output_csv_file, username, email, branch_name)
     message = "Update result file from the host: " + host_ip
     commit_oid = repo.create_commit('HEAD', author, committer, message, tree, [repo.head.target])
     credentials = pygit2.UserPass(username, token)
-    print("Pulled latest remote changes: ", pull_remote_changes(repo, remote, branch_name))
+    print("Pulled latest remote changes: ", fetch_and_merge_remote_changes(repo, remote, branch_name))
     repo.remotes['origin'].push(["refs/heads/" + branch_name], callbacks=pygit2.RemoteCallbacks(credentials=credentials))
