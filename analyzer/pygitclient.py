@@ -12,7 +12,7 @@ def commit_n_push():
 
     output_csv_file = os.path.join(f"analyzer/results", f"github_repo_analysis_result_{host_ip}.csv")
 
-    if os.path.exists(f'/users/{username}/github_miner'+output_csv_file):
+    if os.path.exists(f'/users/{username}/github_miner/'+output_csv_file):
         repository_path = f'/users/{username}/github_miner'
         remote_name = 'origin'
         branch_name = 'main'
