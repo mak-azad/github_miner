@@ -1,3 +1,6 @@
+# Ignore the specific files
+github_repositories_*
+
 # Ignore general Python and project-related files
 __pycache/
 *.pyc
