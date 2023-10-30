@@ -37,11 +37,15 @@ def analyze_repository(repo_url, output_csv_file):
         methods_before = []
         methods_after = []
         for m in commit.modified_files:
-            original_codes.append(m.source_code_before)
-            modified_codes.append(m.source_code)
-            modified_files.append(m.filename)
-            methods_before.append(m.methods_before)
-            methods_after.append(m.changed_methods)
+            try:
+                original_codes.append(m.source_code_before)
+                modified_codes.append(m.source_code)
+                modified_files.append(m.filename)
+                methods_before.append(m.methods_before)
+                methods_after.append(m.changed_methods)
+            except ValueError as e:
+                print(f"Error processing commit {commit.hash}: {e}")
+                continue  # Continue with the next commit if an error occurs
 
         commit_data.append([commit.project_name, commit.hash, commit.msg, commit.committer_date, commit.author.name, commit.insertions, commit.deletions, commit.lines, commit.files, modified_files, original_codes, modified_codes, methods_before, methods_after])
         commit_counter += 1
