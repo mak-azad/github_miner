@@ -8,6 +8,11 @@ A tool to search github repositories and process information found from each of 
 ## 1. Access the master node of your cluster and configure scripts
 ### Install Python 3.8
 ```
+sudo apt-get update && sudo apt-get install -y software-properties-common && sudo add-apt-repository -y ppa:deadsnakes/ppa && sudo apt-get update && sudo apt-get install -y python3.8 && python3.8 --version
+```
+
+### Install pip for Python 3.8
+```
 sudo apt-get install -y python3.8-distutils && curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py && sudo python3.8 get-pip.py && pip3 --version
 ```
 
@@ -32,7 +37,7 @@ For example see the command below
 python repo_fetcher.py --language Python --stars 20 --forks 0 --last_commit 2010-01-01 --result_limit 2000
 ```
 
-You can run without any filter as the command below, then the script applies the above filters by default<br>
+You can run without any filter as the command below, then the script applies the above filters and no limit by default<br>
 `python repo_fetcher.py`
 
 ## 3. Run the commit analyzer on multi-node cluster using parallel ssh

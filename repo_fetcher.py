@@ -153,7 +153,7 @@ def main():
     parser.add_argument('--stars', type=int, default=20, help='Filter by minimum number of stars')
     parser.add_argument('--forks', type=int, default=0, help='Filter by minimum number of forks')
     parser.add_argument('--last_commit', default='2010-01-01', help='Filter by last commit date (YYYY-MM-DD)')
-    parser.add_argument('--result_limit', type=int, default=2000, help='Result limit')
+    parser.add_argument('--result_limit', type=int, default=None, help='Result limit')
     args = parser.parse_args()
 
     # Build the GitHub search query based on provided filter parameters
