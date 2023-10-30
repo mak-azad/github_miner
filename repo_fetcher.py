@@ -3,6 +3,7 @@ import time
 import csv
 import argparse
 import datetime
+import os
 
 def build_github_query(language=None, stars=None, forks=None, last_commit=None):
     """
@@ -158,8 +159,14 @@ def main():
 
     # Build the GitHub search query based on provided filter parameters
     query = build_github_query(args.language, args.stars, args.forks, args.last_commit)
+
+    # Create a 'results' directory if it doesn't exist
+    results_dir = f'repository_lists'
+    if not os.path.exists(results_dir):
+        os.mkdir(results_dir)
     date = datetime.date.today().strftime("%m%d%Y")
-    result_file = f'github_repositories_{args.language}_{date}.csv'
+    result_file = f'{results_dir}/github_repositories_{args.language}_{date}.csv'
+
     # Search GitHub repositories and store the results in a CSV file
     search_github_repositories(query, result_file, args.result_limit)
 
