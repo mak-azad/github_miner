@@ -50,7 +50,7 @@ def analyze_repository(repo_url, output_csv_file):
         if commit_counter % buffer_size == 0:
             published_commits +=buffer_size
             write_commit_analysis_to_csv(output_csv_file, commit_data)
-            commit_n_push(username=args.username, token=args.token, email=args.email)
+            # commit_n_push(username=args.username, token=args.token, email=args.email)
             print(f"{commit_counter} commits are added")
 
     return commit_data
@@ -69,7 +69,6 @@ def main():
     # Generate the output file name with the specified prefix and IP address
     host_ip = socket.gethostbyname(socket.gethostname())
     # Define the input CSV file name
-    # input_csv_file = f"github_repositories_{host_ip}.csv"
     input_csv_file = os.path.join(root_dir, f"github_repositories_{host_ip}.csv")
     repo_urls = read_repository_urls_from_csv(input_csv_file)
     # Specify the output file path inside the 'results' directory
@@ -87,7 +86,7 @@ def main():
     # Write any remaining commit analysis data to the output CSV
     if all_commit_data:
         write_commit_analysis_to_csv(output_csv_file, all_commit_data)
-        commit_n_push(username=args.username, token=args.token, email=args.email)
+        # commit_n_push(username=args.username, token=args.token, email=args.email)
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="GitHub Miner Analyzer")
     parser.add_argument("--username", required=True, help="Git username")
