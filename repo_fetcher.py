@@ -2,6 +2,7 @@ import requests
 import time
 import csv
 import argparse
+import datetime
 
 def build_github_query(language=None, stars=None, forks=None, last_commit=None):
     """
@@ -27,7 +28,7 @@ def build_github_query(language=None, stars=None, forks=None, last_commit=None):
     
     return ' '.join(query_parts)
 
-def search_github_repositories(query, result_limit=None):
+def search_github_repositories(query, result_file, result_limit=None):
     """
     Search GitHub repositories based on the provided query and retrieve repository information.
 
@@ -43,7 +44,7 @@ def search_github_repositories(query, result_limit=None):
     remaining_results = result_limit if result_limit else float('inf')
     idx = 1  # Initialize the serial number
 
-    with open('github_repositories.csv', 'w', newline='') as csvfile:
+    with open(result_file, 'w', newline='') as csvfile:
         fieldnames = ['Serial No', 'Name', 'Description', 'Stars', 'Forks', 'Last Commit', 'Repository URL']
         writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
         writer.writeheader()
@@ -149,16 +150,18 @@ def main():
     # Define command-line arguments for filter parameters
     parser = argparse.ArgumentParser(description='Fetch GitHub repositories based on filters.')
     parser.add_argument('--language', default='Python', help='Filter by programming language')
-    parser.add_argument('--stars', type=int, default=100, help='Filter by minimum number of stars')
-    parser.add_argument('--forks', type=int, default=10, help='Filter by minimum number of forks')
-    parser.add_argument('--last_commit', default='2023-01-01', help='Filter by last commit date (YYYY-MM-DD)')
+    parser.add_argument('--stars', type=int, default=20, help='Filter by minimum number of stars')
+    parser.add_argument('--forks', type=int, default=0, help='Filter by minimum number of forks')
+    parser.add_argument('--last_commit', default='2010-01-01', help='Filter by last commit date (YYYY-MM-DD)')
     parser.add_argument('--result_limit', type=int, default=2000, help='Result limit')
     args = parser.parse_args()
 
     # Build the GitHub search query based on provided filter parameters
     query = build_github_query(args.language, args.stars, args.forks, args.last_commit)
+    date = datetime.date.today().strftime("%m%d%Y")
+    result_file = f'github_repositories_{args.language}_{date}.csv'
     # Search GitHub repositories and store the results in a CSV file
-    search_github_repositories(query, args.result_limit)
+    search_github_repositories(query, result_file, args.result_limit)
 
 if __name__ == '__main__':
     main()

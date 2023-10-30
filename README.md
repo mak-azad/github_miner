@@ -29,7 +29,7 @@ python repo_fetcher.py --language <LANGUAGE> --stars <MINIMUM_STARS> --forks <MI
 
 For example see the command below
 ```
-python repo_fetcher.py --language Python --stars 100 --forks 10 --last_commit 2023-01-01 --result_limit 2000
+python repo_fetcher.py --language Python --stars 20 --forks 0 --last_commit 2010-01-01 --result_limit 2000
 ```
 
 You can run without any filter as the command below, then the script applies the above filters by default<br>
@@ -89,7 +89,7 @@ python3.8 task_parallelizer.py
 ```
 
 ### Execute the analyzer on multiple nodes in parallel
-Run the following command to execute the analyzer using parallel-ssh
+Run the following command to execute the analyzer using parallel-ssh. If asked for password then skip by pressing enter key.
 ```
-parallel-ssh -A -i -h sshhosts 'python3.8 github_miner/analyzer/repo_analyzer.py'
+parallel-ssh -A -i -h sshhosts 'python3.8 github_miner/analyzer/repo_analyzer.py --username your_github_username --token your_github_token --email your_github_email'
 ```
