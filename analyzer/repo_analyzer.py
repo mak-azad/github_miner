@@ -89,11 +89,11 @@ def main():
     for repo_url in repo_urls:
         # Analyze each repository and collect commit data
         print("Processing repo url: ", repo_url)
-        current_file_size = os.path.getsize(output_csv_file)
+        current_file_size = os.path.getsize("/users/ssmtariq/"+output_csv_file)
         print(f'File {output_csv_file} size is {current_file_size} before the processing repo: {repo_url}')
         analyze_repository(repo_url, output_csv_file)
 
-        current_file_size = os.path.getsize(output_csv_file)  # Update the current file size
+        current_file_size = os.path.getsize("/users/ssmtariq/"+output_csv_file)  # Update the current file size
         print(f'File {output_csv_file} size is {current_file_size} after the processing repo: {repo_url}')
         print(f'Max file size: {max_file_size}')
         # Roll the file to a new one if the size exceeds the limit
