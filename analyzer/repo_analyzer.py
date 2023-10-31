@@ -9,8 +9,9 @@ root_dir = "github_miner/analyzer"
 file_type = '.py'
 published_commits = 0
 commit_counter = 0
-# Set number of commits after which result file will be pushed to github
+# Set the number of commits after which the result file will be pushed to GitHub
 buffer_size = 100
+max_file_size = 40 * 1024 * 1024  # 40MB
 
 # Create a 'results' directory if it doesn't exist
 results_dir = f'{root_dir}/results'
@@ -49,15 +50,21 @@ def analyze_repository(repo_url, output_csv_file):
 
         commit_data.append([commit.project_name, commit.hash, commit.msg, commit.committer_date, commit.author.name, commit.insertions, commit.deletions, commit.lines, commit.files, modified_files, original_codes, modified_codes, methods_before, methods_after])
         commit_counter += 1
-
-        #Push interim commit analysis result to github
+        # Push interim commit analysis result to GitHub
         if commit_counter % buffer_size == 0:
-            published_commits +=buffer_size
+            published_commits += buffer_size
             write_commit_analysis_to_csv(output_csv_file, commit_data)
-            # commit_n_push(username=args.username, token=args.token, email=args.email)
             print(f"{commit_counter} commits are added")
-
+    # Ensure all commits are written to result file
+    if(commit_counter>published_commits):
+        write_commit_analysis_to_csv(output_csv_file, commit_data)
     return commit_data
+
+def roll_output_csv_file(output_csv_file, counter):
+    # Incrementally name the new file
+    filename_parts = os.path.splitext(output_csv_file)
+    new_output_csv_file = f"{filename_parts[0]}_{counter}.csv"
+    os.rename(output_csv_file, new_output_csv_file)
 
 def write_commit_analysis_to_csv(output_csv_file, commit_data):
     with open(output_csv_file, 'a', newline='') as output_file:
@@ -78,19 +85,24 @@ def main():
     # Specify the output file path inside the 'results' directory
     output_csv_file = os.path.join(results_dir, f"github_repo_analysis_result_{host_ip}.csv")
 
-    all_commit_data = []
-    # commit_data = analyze_repository('https://github.com/ssmtariq/github_miner', output_csv_file)
-    # all_commit_data.extend(commit_data)
+    file_counter = 1
     for repo_url in repo_urls:
         # Analyze each repository and collect commit data
         print("Processing repo url: ", repo_url)
-        commit_data = analyze_repository(repo_url, output_csv_file)
-        all_commit_data.extend(commit_data)
+        current_file_size = os.path.getsize(output_csv_file)
+        analyze_repository(repo_url, output_csv_file)
 
-    # Write any remaining commit analysis data to the output CSV
-    if all_commit_data:
-        write_commit_analysis_to_csv(output_csv_file, all_commit_data)
-        # commit_n_push(username=args.username, token=args.token, email=args.email)
+        current_file_size += os.path.getsize(output_csv_file)  # Update the current file size
+        # Roll the file to a new one if the size exceeds the limit
+        if current_file_size > max_file_size:
+            roll_output_csv_file(output_csv_file, file_counter)
+            # commit_n_push(username=args.username, token=args.token, email=args.email)
+            current_file_size = 0  # Reset the current file size
+            file_counter += 1
+
+    # Push all the changes in the analyzer/results directory to github
+    # commit_n_push(username=args.username, token=args.token, email=args.email)
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="GitHub Miner Analyzer")
     parser.add_argument("--username", required=True, help="Git username")
