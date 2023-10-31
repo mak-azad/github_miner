@@ -88,9 +88,13 @@ parallel-ssh -A -i -h sshhosts 'pip3 show pydriller && pip3 show pygit2'
 parallel-ssh -i -h sshhosts 'git clone https://github.com/ssmtariq/github_miner.git'
 ```
 
-### Run script to split and distribute the input files along with analyzer among the nodes
+### Run script to split and distribute the input files among the nodes
 ```
-python3.8 task_parallelizer.py
+python3.8 task_parallelizer.py your_repo_list your_username
+```
+For example
+```
+python3.8 task_parallelizer.py repository_lists/github_repositories_Python_10302023.csv ssmtariq
 ```
 
 ### Execute the analyzer on multiple nodes in parallel

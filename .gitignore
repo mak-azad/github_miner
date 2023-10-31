@@ -1,5 +1,5 @@
 # Ignore the specific files
-github_repositories_*
+github_repositories_128.*
 
 # Ignore general Python and project-related files
 __pycache/
