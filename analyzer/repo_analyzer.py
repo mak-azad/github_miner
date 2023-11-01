@@ -38,7 +38,7 @@ def filter_commit(commit):
         modified_files = []
 
         # Iterate through the modified files in the commit
-        for file in commit.modifications:
+        for file in commit.modified_files:
             # Get the diff of each file
             diff = file.diff
 
