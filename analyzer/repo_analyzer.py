@@ -32,10 +32,10 @@ def read_repository_urls_from_csv(input_csv_file):
         repo_urls = [row[6] for row in reader]
     return repo_urls
 
-def filter_commit(commit):
+def filter_modified_files(commit):
     # Check if the commit message contains any keywords from general_keywords
     if any(keyword in commit.msg for keyword in general_keywords):
-        modified_files = []
+        filtered_modified_files = []
 
         # Iterate through the modified files in the commit
         for file in commit.modified_files:
@@ -55,21 +55,9 @@ def filter_commit(commit):
                 for line in added_lines
                 for keyword in concurrency_keywords
             ):
-                modified_files.append(file)
+                filtered_modified_files.append(file)
 
-        # Create a new Commit object with the filtered files
-        filtered_commit = Commit(
-            commit.hash,
-            commit.author.name,
-            commit.author.email,
-            commit.msg,
-            commit.author_date,
-            commit.committer_date,
-            modified_files,
-            commit.parents,
-        )
-
-        return filtered_commit
+        return filtered_modified_files
 
     return None
 
@@ -78,21 +66,20 @@ def analyze_repository(repo_url, output_csv_file):
     global published_commits
     commit_data = []
     for commit in Repository(repo_url, only_modifications_with_file_types=[file_type]).traverse_commits():
-        filtered_commit = filter_commit(commit)
-        if filtered_commit is not None:
-            commit = filtered_commit
+        filtered_modified_files = filter_modified_files(commit)
+        if filtered_modified_files is not None:
             original_codes = []
             modified_codes = []
             modified_files = []
             methods_before = []
             methods_after = []
-            for m in commit.modified_files:
+            for file in filtered_modified_files:
                 try:
-                    original_codes.append(m.source_code_before)
-                    modified_codes.append(m.source_code)
-                    modified_files.append(m.filename)
-                    methods_before.append(m.methods_before)
-                    methods_after.append(m.changed_methods)
+                    original_codes.append(file.source_code_before)
+                    modified_codes.append(file.source_code)
+                    modified_files.append(file.filename)
+                    methods_before.append(file.methods_before)
+                    methods_after.append(file.changed_methods)
                 except ValueError as e:
                     print(f"Error processing commit {commit.hash}: {e}")
                     continue  # Continue with the next commit if an error occurs
