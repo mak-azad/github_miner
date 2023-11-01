@@ -67,7 +67,7 @@ def analyze_repository(repo_url, output_csv_file):
     commit_data = []
     for commit in Repository(repo_url, only_modifications_with_file_types=[file_type]).traverse_commits():
         filtered_modified_files = filter_modified_files(commit)
-        if filtered_modified_files is not None:
+        if filtered_modified_files is not None and len(filtered_modified_files) > 0:
             original_codes = []
             modified_codes = []
             modified_files = []
