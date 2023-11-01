@@ -73,18 +73,28 @@ def analyze_repository(repo_url, output_csv_file):
             modified_files = []
             methods_before = []
             methods_after = []
+
+            # Extract methods_before and methods_after from modified files
+            for m in commit.modified_files:
+                try:
+                    methods_before.append(m.methods_before)
+                    methods_after.append(m.changed_methods)
+                except ValueError as e:
+                    print(f"Error processing commit {commit.hash}: {e}")
+                    continue  # Continue with the next commit if an error occurs
+
             for file in filtered_modified_files:
                 try:
                     original_codes.append(file.source_code_before)
                     modified_codes.append(file.source_code)
                     modified_files.append(file.filename)
-                    methods_before.append(file.methods_before)
-                    methods_after.append(file.changed_methods)
                 except ValueError as e:
                     print(f"Error processing commit {commit.hash}: {e}")
                     continue  # Continue with the next commit if an error occurs
 
-            commit_data.append([commit.project_name, commit.hash, commit.msg, commit.committer_date, commit.author.name, commit.insertions, 
+            # Construct the commit URL
+            commit_url = f"{repo_url}/commit/{commit.hash}"
+            commit_data.append([commit.project_name, commit_url, commit.hash, commit.msg, commit.committer_date, commit.author.name, commit.insertions, 
                                 commit.deletions, commit.lines, commit.files, modified_files, original_codes, modified_codes, methods_before, methods_after])
             commit_counter += 1
             # Push interim commit analysis result to GitHub
@@ -109,7 +119,7 @@ def write_commit_analysis_to_csv(output_csv_file, commit_data):
         writer = csv.writer(output_file)
         if output_file.tell() == 0:
             # If the file is empty, write the header row
-            writer.writerow(["Project Name", "Commit Hash", "Message", "Commit Date", "Author Name", "Additions", "Deletions", "Lines changed", "Files Changed", "Modified files", "Original Code", "Modified Code", "Methods Before", "Methods After"])
+            writer.writerow(["Project Name", "Commit URL", "Commit Hash", "Message", "Commit Date", "Author Name", "Additions", "Deletions", "Lines changed", "Files Changed", "Modified files", "Original Code", "Modified Code", "Methods Before", "Methods After"])
         # Write the commit data
         writer.writerows(commit_data)
 
