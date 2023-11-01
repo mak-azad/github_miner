@@ -93,6 +93,7 @@ def analyze_repository(repo_url, output_csv_file):
                 write_commit_analysis_to_csv(output_csv_file, commit_data)
                 print(f"{commit_counter} commits are added")
     # Ensure all commits are written to result file
+    print(f"Total {commit_counter} commits found from the repository: {repo_url}")
     if(commit_counter>published_commits):
         write_commit_analysis_to_csv(output_csv_file, commit_data)
     return commit_data
