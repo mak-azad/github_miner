@@ -11,7 +11,7 @@ published_commits = 0
 commit_counter = 0
 # Set the number of commits after which the result file will be pushed to GitHub
 buffer_size = 100
-max_file_size = 40 * 1024  # 40MB
+# max_file_size = 4 * 1024  # 40MB
 
 # Create a 'results' directory if it doesn't exist
 results_dir = f'{root_dir}/results'
@@ -85,23 +85,23 @@ def main():
     # Specify the output file path inside the 'results' directory
     output_csv_file = os.path.join(results_dir, f"github_repo_analysis_result_{host_ip}.csv")
 
-    file_counter = 1
+    # file_counter = 1
     for repo_url in repo_urls:
         # Analyze each repository and collect commit data
         print("Processing repo url: ", repo_url)
-        current_file_size = os.path.getsize("/users/ssmtariq/"+output_csv_file)
-        print(f'File {output_csv_file} size is {current_file_size} before the processing repo: {repo_url}')
+        # current_file_size = os.path.getsize(output_csv_file)
+        # print(f'File {output_csv_file} size is {current_file_size} before the processing repo: {repo_url}')
         analyze_repository(repo_url, output_csv_file)
 
-        current_file_size = os.path.getsize("/users/ssmtariq/"+output_csv_file)  # Update the current file size
-        print(f'File {output_csv_file} size is {current_file_size} after the processing repo: {repo_url}')
-        print(f'Max file size: {max_file_size}')
+        # current_file_size = os.path.getsize(output_csv_file)  # Update the current file size
+        # print(f'File {output_csv_file} size is {current_file_size} after the processing repo: {repo_url}')
+        # print('Max file size: {}')
         # Roll the file to a new one if the size exceeds the limit
-        if current_file_size > max_file_size:
-            roll_output_csv_file(output_csv_file, file_counter)
-            # commit_n_push(username=args.username, token=args.token, email=args.email)
-            current_file_size = 0  # Reset the current file size
-            file_counter += 1
+        # if current_file_size > max_file_size:
+        #     roll_output_csv_file(output_csv_file, file_counter)
+        #     # commit_n_push(username=args.username, token=args.token, email=args.email)
+        #     current_file_size = 0  # Reset the current file size
+        #     file_counter += 1
 
     # Push all the changes in the analyzer/results directory to github
     # commit_n_push(username=args.username, token=args.token, email=args.email)
